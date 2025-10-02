@@ -1,0 +1,19 @@
+<main class="show-stories-page">
+  <h1 class="story-page-heading">{{title}}</h1>
+   @for (story of stories; track story; let i = $index ) {
+    <app-news-card
+      [cnt]="getCounter(i + 1)"
+      [id]="story.id"
+      [title]="story.title"
+      [by]="story.by"
+      [descendants]="story.descendants"
+      [score]="story.score"
+      [type]="story.type"
+      [url]="story.url"
+      [time]="story.time"
+    ></app-news-card>
+  }
+  @if(stories.length > 0) {
+    <button (click)="loadNextPage()" [disabled]="lastPage()" aria-label="Next page">Next Page</button>
+  }
+</main>

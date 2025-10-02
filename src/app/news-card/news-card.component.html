@@ -1,0 +1,89 @@
+<div class="news-item">
+  @if (type === STORY) {
+    <div class="author">
+      <div class="avatar">{{ cnt }} <img [src]="identiconUrl" alt="identicon" /></div>
+      <div class="username"> {{ by }} </div>
+    </div>
+    @if(url){
+      <h2 class="title">
+      <a [href]="url" target="_blank" rel="noopener noreferrer">{{ title }}</a>
+      </h2>
+    } @else {
+      <h2 class="title">{{ title }}</h2>
+    }
+    <h4>{{ text }}</h4>
+    <div class="info">
+      @if( domain) {
+        <span>{{ domain }} | {{ descendants ?? 0 }} comments | {{ score ?? 0 }} upvotes
+          | {{ posted | date : "MMMM d, yyyy" }}</span>
+      } @else {
+        <span>{{ descendants ?? 0 }} comments | {{ score ?? 0 }} upvotes |
+          {{ posted | date : "MMMM d, yyyy" }}</span>
+      }
+    ></div>
+
+  } @else if (type === ASK) {
+    <div class="author">
+      <div class="avatar">{{ cnt }} <img [src]="identiconUrl" alt="identicon" /></div>
+      <div class="username"> {{ by }} </div>
+    </div>
+    <h2 class="title">{{ title }}</h2>
+    <h4>{{ text }}</h4>
+    <div class="info">
+      <span>{{ descendants ?? 0 }} comments | {{ score ?? 0 }} upvotes |
+        {{ posted | date : "MMMM d, yyyy" }}</span>
+    ></div>
+
+  } @else if (type === COMMENT) {
+     <div class="author">
+      <div class="avatar">{{ cnt }} <img [src]="identiconUrl" alt="identicon" /></div>
+      <div class="username"> {{ by }} </div>
+    </div>
+      @if(url){
+        <h2 class="title">
+          <a [href]="url" target="_blank" rel="noopener noreferrer">{{ title }}</a>
+        </h2>
+      } @else {
+        <h2 class="title">{{ title }}</h2>
+      }
+      <h4>{{ text }}</h4>
+      <div class="info">
+        <span>{{ score ?? 0 }} upvotes | {{ posted | date : "MMMM d, yyyy" }}</span>
+      ></div>
+
+  } @else if (type === JOB) {
+    <div class="author">
+      <div class="avatar">{{ cnt }} <img [src]="identiconUrl" alt="identicon" /></div>
+      <div class="username"> {{ by }} </div>
+    </div>
+    <h2 class="title">
+      <a [href]="url" target="_blank" rel="noopener noreferrer">{{ title }}</a>
+    </h2>
+    <div class="info">
+      <span>{{ score ?? 0 }} upvotes | {{ posted | date : "MMMM d, yyyy" }}</span>
+    ></div>
+
+  } @else if (type === POLL) {
+      <div class="author">
+      <div class="avatar">{{ cnt }} <img [src]="identiconUrl" alt="identicon" /></div>
+      <div class="username"> {{ by }} </div>
+    </div>
+    <h2 class="title">{{ title }}</h2>
+    <h4>{{ text }}</h4>
+    <div class="info">
+    <span>{{ descendants ?? 0 }} comments | {{ score ?? 0 }} upvotes |
+      {{ posted | date : "MMMM d, yyyy" }}</span>
+    ></div>
+
+  } @else if (type === POLLOPT) {
+    <div class="author">
+      <div class="avatar">{{ cnt }} <img [src]="identiconUrl" alt="identicon" /></div>
+      <div class="username"> {{ by }} </div>
+    </div>
+    <h4>{{ text }}</h4>
+    <div class="info">
+      <p>Poll: {{ poll }}</p>
+      <span>{{ posted | date : "MMMM d, yyyy" }}</span>
+    ></div>
+  }
+</div>

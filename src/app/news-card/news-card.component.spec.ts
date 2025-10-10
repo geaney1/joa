@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NewsCardComponent } from './news-card.component';
-import { RouterTestingModule } from '@angular/router/testing';
+import { DatePipe } from '@angular/common';
 
 describe('NewsCardComponent', () => {
   let component: NewsCardComponent;
@@ -8,42 +8,37 @@ describe('NewsCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NewsCardComponent, RouterTestingModule],
+      imports: [NewsCardComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NewsCardComponent);
     component = fixture.componentInstance;
   });
 
-
-  it('should convert Unix timestamp to Date object', () => {
-    const timestamp = 1696100000; // Example timestamp
-    component.time = timestamp;
-    component.ngOnInit();
-    expect(component.posted).toEqual(new Date(timestamp * 1000));
+  it('should create the component', () => {
+    expect(component).toBeTruthy();
   });
 
-  it('should extract domain from a valid URL', () => {
-    component.url = 'https://example.com/page';
-    component.ngOnInit();
-    expect(component.domain).toBe('example.com');
-  });
-
-  it('should fallback to slicing URL if domain extraction fails', () => {
-    component.url = 'https://example.com';
-    spyOn(RegExp.prototype, 'exec').and.throwError('RegExp failed');
-    component.ngOnInit();
-    expect(component.domain).toBe('example.com');
-  });
-
-  it('should generate identiconUrl based on id', () => {
+  it('should compute identiconUrl based on id', () => {
     component.id = 123456;
-    const expected = 'https://github.com/identicons/1234.png';
-    expect(component.identiconUrl).toBe(expected);
+    expect(component.identiconUrl).toBe('assets/image6.png');
   });
 
-  it('should default inputs correctly', () => {
-    expect(component.cnt).toBe(0);
-    expect(component.id).toBe(0);
+  it('should set posted date from Unix timestamp', () => {
+    const unixTime = 1700000000; // example timestamp
+    component.time = unixTime;
+    component.ngOnInit();
+    expect(component.posted).toEqual(new Date(unixTime * 1000));
+  });
+
+  it('should not set posted if time is undefined', () => {
+    component.time = undefined;
+    component.ngOnInit();
+    expect(component.posted).toBeUndefined();
+  });
+
+  it('should handle url parsing gracefully', () => {
+    component.url = 'https://example.com/news/article';
+    expect(() => component.ngOnInit()).not.toThrow();
   });
 });

@@ -13,6 +13,7 @@ import { NewsCardComponent } from '../news-card/news-card.component';
 export class PastListComponent {
   title: string = 'Past Stories';
   currentPage = 1;
+  itemCounter: number = 0;
 
   public stories: Array<Item> = [];
 
@@ -21,22 +22,23 @@ export class PastListComponent {
   }
 
   fetchData(page: number): void {
-    this.newsService.askstories(page).subscribe((stories) => {
+    this.newsService.paststories(page, 1).subscribe((stories) => {
       return (this.stories = stories);
     });
   }
 
   loadNextPage(): void {
+    this.itemCounter += this.stories.length;
     this.stories = [];
     this.currentPage++;
     this.fetchData(this.currentPage);
   }
 
   lastPage(): boolean {
-    return this.stories.length < 20;
+    return this.stories.length ===0;
   }
 
   getCounter(i: number): number {
-    return this.currentPage > 1 ? ((this.currentPage - 1) * 20) + i : i;
+    return this.itemCounter + i;
   }
 }

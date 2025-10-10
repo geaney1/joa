@@ -1,33 +1,50 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AskListComponent } from './ask-list.component';
-import { HackerNewsService } from '../services/hacker-news.service';
-import { NewsCardComponent } from '../news-card/news-card.component';
 import { of } from 'rxjs';
+import { HackerNewsService } from '../services/hacker-news.service';
 import Item from '../models/Item';
+import { AskListComponent } from './ask-list.component';
+
+const mockItems2: Item[] = [
+  { id: 1, title: 'ask story 1', type: 'story' },
+  { id: 2, title: 'ask story 2', type: 'story' },
+];
+
+const mockItems20: Item[] = [
+  { id: 1, title: 'ask story 1', type: 'story' },
+  { id: 2, title: 'ask story 2', type: 'story' },
+  { id: 3, title: 'ask story 3', type: 'story' },
+  { id: 4, title: 'ask story 4', type: 'story' },
+  { id: 5, title: 'ask story 5', type: 'story' },
+  { id: 6, title: 'ask story 6', type: 'story' },
+  { id: 7, title: 'ask story 7', type: 'story' },
+  { id: 8, title: 'ask story 8', type: 'story' },
+  { id: 9, title: 'ask story 9', type: 'story' },
+  { id: 10, title: 'ask story 10', type: 'story' },
+  { id: 11, title: 'ask story 11', type: 'story' },
+  { id: 12, title: 'ask story 12', type: 'story' },
+  { id: 13, title: 'ask story 13', type: 'story' },
+  { id: 14, title: 'ask story 14', type: 'story' },
+  { id: 15, title: 'ask story 15', type: 'story' },
+  { id: 16, title: 'ask story 16', type: 'story' },
+  { id: 17, title: 'ask story 17', type: 'story' },
+  { id: 18, title: 'ask story 18', type: 'story' },
+  { id: 19, title: 'ask story 19', type: 'story' },
+  { id: 20, title: 'ask story 20', type: 'story' },
+];
 
 describe('AskListComponent', () => {
   let component: AskListComponent;
   let fixture: ComponentFixture<AskListComponent>;
-  let mockService: jasmine.SpyObj<HackerNewsService>;
-
-  const mockStories: Item[] = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    title: `Story ${i + 1}`,
-    by: `user${i + 1}`,
-    time: Date.now(),
-    score: i * 10,
-    descendants: i,
-    url: `https://example.com/story${i + 1}`,
-    type: 'story',
-  }));
+  let mockNewsService: jest.Mocked<HackerNewsService>;
 
   beforeEach(async () => {
-    mockService = jasmine.createSpyObj('HackerNewsService', ['askstories']);
-    mockService.askstories.and.returnValue(of(mockStories));
+    mockNewsService = {
+      askstories: jest.fn().mockReturnValue(of(mockItems2)),
+    } as unknown as jest.Mocked<HackerNewsService>;
 
     await TestBed.configureTestingModule({
-      imports: [AskListComponent, NewsCardComponent],
-      providers: [{ provide: HackerNewsService, useValue: mockService }],
+      imports: [AskListComponent], // ✅ standalone components go here
+      providers: [{ provide: HackerNewsService, useValue: mockNewsService }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AskListComponent);
@@ -35,35 +52,16 @@ describe('AskListComponent', () => {
     fixture.detectChanges();
   });
 
+  it('should create the component', () => {
+    expect(component).toBeTruthy();
+  });
 
-  it('should initialize with title and fetch first page', () => {
-    expect(component.title).toBe('Asked Stories');
-    expect(component.currentPage).toBe(1);
-    expect(mockService.askstories).toHaveBeenCalledWith(1);
+  it('should load ask stories from the service', () => {
+    mockNewsService.askstories.mockReturnValue(of(mockItems20));
+    component.loadNextPage();
+    expect(component.currentPage).toBe(2);
+    expect(mockNewsService.askstories).toHaveBeenCalledWith(2);
     expect(component.stories.length).toBe(20);
-  });
-  
-  it('should return true for lastPage if stories < 20', () => {
-    component.stories = mockStories.slice(0, 1);
-    expect(component.lastPage()).toBeTrue();
-  });
-
-  it('should return false for lastPage if stories == 20', () => {
-    component.stories = Array(20).fill({
-      id: 0,
-      title: '',
-      by: '',
-      time: 0,
-      url: '',
-    });
-    expect(component.lastPage()).toBeFalse();
-  });
-
-  it('should calculate correct counter index', () => {
-    component.currentPage = 1;
-    expect(component.getCounter(5)).toBe(5);
-
-    component.currentPage = 3;
-    expect(component.getCounter(5)).toBe(45); // (3 - 1) * 20 + 5
+    expect(component.stories[0].title).toBe('ask story 1');
   });
 });

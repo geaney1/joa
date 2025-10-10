@@ -10,7 +10,6 @@ export class HackerNewsService {
   public maxFetchCount: number = 20;
   private topIdStoryList: number[] = [];
   private newIdStoryList: number[] = [];
-  private pastIdStoryList: number[] = [];
   private askIdStoryList: number[] = [];
   private jobIdStoryList: number[] = [];
   private showIdStoryList: number[] = [];
@@ -148,44 +147,36 @@ export class HackerNewsService {
     }
   }
 
-  public paststories(page: number): Observable<Array<Item>> {
-    const start = Math.max(0, (page - 1) * this.maxFetchCount);
-    const now = new Date();
-    now.setHours(0, 0, 0, 0); // reset to midnight
-    const unixTime = Math.floor(now.getTime() / 1000); // get any thing o;der than today
+  public paststories(page: number, daysAgo: number): Observable<Array<Item>> {
+    const start = Math.max(0, (page - 1) * this.maxFetchCount * 2);
+
+    const cutoffTimestamp = this.getLastMidnightUnix();
 
     // Helper: slice the story IDs for the requested page
     const sliceIds = (ids: number[]) =>
-      ids.slice(start, Math.min(start + this.maxFetchCount, ids.length));
+      ids.slice(start, Math.min(start + this.maxFetchCount * 2, ids.length));
 
     const fetchItems = (ids: number[]) =>
       forkJoin(
         sliceIds(ids).map((id) =>
           this.http.get<Item>(`${this.baseUrl}/item/${id}.json`)
         )
+      ).pipe(
+        map((items: Item[]) =>
+          items.filter((item) => item?.time && item.time <= cutoffTimestamp)
+        )
       );
 
-    if (!this.pastIdStoryList || this.pastIdStoryList.length === 0) {
-      return this.http
-        .get<Array<number>>(`${this.baseUrl}/paststories.json`)
-        .pipe(
-          tap((ids) => (this.pastIdStoryList = ids)), // cache ids
-          switchMap((ids) => fetchItems(ids))
-        );
-    } else {
-      return fetchItems(this.showIdStoryList);
-    }
+    return this.http
+      .get<Array<number>>(`${this.baseUrl}/topstories.json`)
+      .pipe(switchMap((ids) => fetchItems(ids)));
   }
 
-  /*  
-  public updates(): Observable<Updates> {
-    return this.http.get<Updates>(`${this.baseUrl}/updates.json`);
+  private getLastMidnightUnix(): number {
+    const now = new Date();
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.floor(midnight.getTime() / 1000);
   }
- 
-  public user(userid: string): Observable<User> {
-    return this.http.get<User>(`${this.baseUrl}/user/${userid}.json`);
-  }
-*/
 
   public maxitem(): Observable<number> {
     return this.http.get<number>(`${this.baseUrl}/maxitem.json`);

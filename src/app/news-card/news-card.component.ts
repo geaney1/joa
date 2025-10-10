@@ -27,7 +27,6 @@ export class NewsCardComponent implements OnInit {
 
   public domain: string | undefined;
   public posted: Date | undefined;
-  public addedToReadLater: boolean | undefined;
 
   public readonly JOB = 'job';
   public readonly STORY = 'story';
@@ -39,15 +38,11 @@ export class NewsCardComponent implements OnInit {
   public constructor() {}
 
   public get identiconUrl(): string {
-    const strId = String(this.id);
-    return `https://github.com/identicons/${strId.slice(0, 4)}.png`;
+    const lastDigit = (this.id % 10).toString();
+    return 'assets/image' + lastDigit + '.png';
   }
 
   public ngOnInit(): void {
-    if (this.alreadyAdded) {
-      this.addedToReadLater = true;
-    }
-
     if (this.time) {
       this.posted = new Date(this.time * 1000);
     }

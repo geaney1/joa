@@ -3,11 +3,17 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./out-tsc/spec",
-    "types": [
-      "jasmine"
-    ]
+    "types": ["jest"],
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "allowJs": true,
+    "skipLibCheck": true
   },
+  "files": [
+    "src/test.ts", // REMOVE THIS 
+    "src/setup-jest.ts", // NEW Add this so that the file will be found
+    "src/polyfills.ts"
+  ],
   "include": [
     "src/**/*.spec.ts",
     "src/**/*.d.ts"

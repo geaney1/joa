@@ -20,7 +20,7 @@
         <span>{{ descendants ?? 0 }} comments | {{ score ?? 0 }} upvotes |
           {{ posted | date : "MMMM d, yyyy" }}</span>
       }
-    ></div>
+    </div>
 
   } @else if (type === ASK) {
     <div class="author">
@@ -32,7 +32,7 @@
     <div class="info">
       <span>{{ descendants ?? 0 }} comments | {{ score ?? 0 }} upvotes |
         {{ posted | date : "MMMM d, yyyy" }}</span>
-    ></div>
+    </div>
 
   } @else if (type === COMMENT) {
      <div class="author">
@@ -49,7 +49,7 @@
       <h4>{{ text }}</h4>
       <div class="info">
         <span>{{ score ?? 0 }} upvotes | {{ posted | date : "MMMM d, yyyy" }}</span>
-      ></div>
+      </div>
 
   } @else if (type === JOB) {
     <div class="author">
@@ -61,7 +61,7 @@
     </h2>
     <div class="info">
       <span>{{ score ?? 0 }} upvotes | {{ posted | date : "MMMM d, yyyy" }}</span>
-    ></div>
+    </div>
 
   } @else if (type === POLL) {
       <div class="author">
@@ -73,7 +73,7 @@
     <div class="info">
     <span>{{ descendants ?? 0 }} comments | {{ score ?? 0 }} upvotes |
       {{ posted | date : "MMMM d, yyyy" }}</span>
-    ></div>
+    </div>
 
   } @else if (type === POLLOPT) {
     <div class="author">
@@ -84,6 +84,6 @@
     <div class="info">
       <p>Poll: {{ poll }}</p>
       <span>{{ posted | date : "MMMM d, yyyy" }}</span>
-    ></div>
+    </div>
   }
 </div>

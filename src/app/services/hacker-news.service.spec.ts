@@ -1,13 +1,17 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ItemService } from './item.service';
-import Item from '../models/Item';
+import { Item } from '../models/Item';
 
 describe('ItemService', () => {
   let service: ItemService;
   let httpMock: HttpTestingController;
+  
+  const mockItem: Item[] = [
+  { id: 1, title: 'story 1', type: 'story', time: 1696118400, score: 42 },
+  { id: 2, title: 'story 2', type: 'story', time: 1696118400, score: 42 },
+];
 
-  const mockItem: Item = { id: 1, title: 'Test', score: 42 };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -34,11 +38,10 @@ describe('ItemService', () => {
   });
 
   it('should fetch multiple items using forkJoin', () => {
-    const mockItems: Item[] = [
-      { id: 1, title: 'One', score: 10 },
-      { id: 2, title: 'Two', score: 20 },
-    ];
-
+   const mockItems: Item[] = [
+  { id: 1, title: 'story 1', type: 'story', time: 1696118400 },
+  { id: 2, title: 'story 2', type: 'story', time: 1696118400 },
+];
     service.getItems([1, 2]).subscribe(items => {
       expect(items).toEqual(mockItems);
     });

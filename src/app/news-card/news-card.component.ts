@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DatePipe, NgClass } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { Item } from '../models/Item';
 
 @Component({
   selector: 'app-news-card',
@@ -58,4 +59,8 @@ export class NewsCardComponent implements OnInit {
       }
     }
   }
+  
+trackById(index: number, item: Item): number {
+  return item.id;
+}
 }

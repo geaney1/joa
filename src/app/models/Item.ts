@@ -1,4 +1,4 @@
-type Item = {
+export interface Item {
   id: number; // The item's unique id.
   deleted?: boolean; // true` if the item is deleted.
   type: 'job' | 'story' | 'comment' | 'poll' | 'pollopt';
@@ -13,5 +13,6 @@ type Item = {
   parent?: number; // The item's parent. For comments, either another comment or the relevant story.                 //  For pollopts, the relevant poll
   text?: string; // The comment, story or poll text. HTML.
   parts?: Array<number>; //  A list of related pollopts, in display order.
-};
-export default Item;
+  poll?: number; // The pollopt's associated poll.
+} 
+      

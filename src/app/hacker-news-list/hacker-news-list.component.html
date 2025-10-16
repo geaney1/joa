@@ -1,6 +1,6 @@
 <main class="show-stories-page">
   <h1 class="story-page-heading">{{title}}</h1>
-    @for (story of stories; track story; let i = $index ) {
+    @for (story of stories; let i = $index; track story.id) {
     <app-news-card
       [cnt]="getCounter(i + 1)"
       [id]="story.id"

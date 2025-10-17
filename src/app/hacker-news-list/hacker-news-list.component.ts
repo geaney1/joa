@@ -20,7 +20,6 @@ export class HackerNewsListComponent implements OnInit {
   currentPage = 1;
   itemCounter = 0;
   storyType = 'topstories';
-  getStoriesFunc = 'getOtherStories';
   maxFetchCount = 20;
 
   public stories: Item[] = [];
@@ -52,10 +51,9 @@ export class HackerNewsListComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       this.storyType = params.get('storytype') ?? 'topstories';
-      if (this.storyType === PastStories) {
-        this.getStoriesFunc = 'getPastFSrories';
-        this.maxFetchCount = 40;
-      }
+      this.currentPage = 1;
+      this.itemCounter = 0;
+      this.maxFetchCount = this.storyType === PastStories ? 40 : 20;
       this.storyClick$.next(this.storyType); // triggers new request
     });
   }
@@ -81,7 +79,6 @@ export class HackerNewsListComponent implements OnInit {
 
   lastPage(): boolean {
     return (
-      
       this.storyType === PastStories || this.stories.length < this.maxFetchCount
     );
   }

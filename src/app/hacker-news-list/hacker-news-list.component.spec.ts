@@ -60,7 +60,8 @@ describe('HackerNewsListComponent', () => {
 
   it('should fetch stories on init', () => {
     component.storyType = 'topstories';
-    component.fetchData(1);
+    component.currentPage = 1;
+    component.fetchData();
     expect(mockNewsService.getOtherStories).toHaveBeenCalledWith(1, 'topstories', 20);
     expect(component.stories.length).toBe(2);
   });

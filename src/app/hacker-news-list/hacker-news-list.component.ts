@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NewsCardComponent } from '../news-card/news-card.component';
 import { HackerNewsService } from '../services/hacker-news.service';
 import { Item } from '../models/Item';
+import { Subject, switchMap } from 'rxjs';
 
 export const PastStories = 'paststories';
 
@@ -19,32 +20,54 @@ export class HackerNewsListComponent implements OnInit {
   currentPage = 1;
   itemCounter = 0;
   storyType = 'topstories';
+  getStoriesFunc = 'getOtherStories';
   maxFetchCount = 20;
 
   public stories: Item[] = [];
+  private storyClick$ = new Subject<string>();
 
   constructor(
     public newsService: HackerNewsService,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    this.storyClick$
+      .pipe(
+        switchMap((storyType) =>
+          storyType === PastStories
+            ? this.newsService.getPastStories(
+                this.currentPage,
+                this.storyType,
+                this.maxFetchCount
+              )
+            : this.newsService.getOtherStories(
+                this.currentPage,
+                this.storyType,
+                this.maxFetchCount
+              )
+        )
+      )
+      .subscribe((stories) => (this.stories = stories));
+  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       this.storyType = params.get('storytype') ?? 'topstories';
-      this.fetchData(this.currentPage);
-    }); 
+      if (this.storyType === PastStories) {
+        this.getStoriesFunc = 'getPastFSrories';
+        this.maxFetchCount = 40;
+      }
+      this.storyClick$.next(this.storyType); // triggers new request
+    });
   }
 
-  fetchData(page: number): void {
+  fetchData(): void {
     if (this.storyType === PastStories) {
-      this.maxFetchCount = 40;
       this.newsService
-        .getPastStories(page, this.storyType, this.maxFetchCount)
+        .getPastStories(this.currentPage, this.storyType, this.maxFetchCount)
         .subscribe((stories: Array<Item>) => (this.stories = stories));
     } else {
-      this.maxFetchCount = 20;
       this.newsService
-        .getOtherStories(page, this.storyType, this.maxFetchCount)
+        .getOtherStories(this.currentPage, this.storyType, this.maxFetchCount)
         .subscribe((stories: Array<Item>) => (this.stories = stories));
     }
   }
@@ -53,11 +76,12 @@ export class HackerNewsListComponent implements OnInit {
     this.itemCounter += this.stories.length;
     this.stories = [];
     this.currentPage++;
-    this.fetchData(this.currentPage);
+    this.fetchData();
   }
 
   lastPage(): boolean {
     return (
+      
       this.storyType === PastStories || this.stories.length < this.maxFetchCount
     );
   }

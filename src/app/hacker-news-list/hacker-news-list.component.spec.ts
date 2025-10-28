@@ -2,9 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { HackerNewsListComponent } from './hacker-news-list.component';
 import { HackerNewsService } from '../services/hacker-news.service';
-import {Item} from '../models/Item';
+import { Item } from '../models/Item';
 import { provideRouter } from '@angular/router';
-
 
 const mockItems2: Item[] = [
   { id: 1, title: 'story 1', type: 'story', time: 1696118400 },
@@ -16,12 +15,12 @@ const mockItems20: Item[] = [
   { id: 3, title: 'story 3', type: 'story', time: 1696118400 },
   { id: 4, title: 'story 4', type: 'story', time: 1696118400 },
   { id: 5, title: 'story 5', type: 'story', time: 1696118400 },
-  { id: 6, title: 'story 6', type: 'story', time: 1696118400  },
+  { id: 6, title: 'story 6', type: 'story', time: 1696118400 },
   { id: 7, title: 'story 7', type: 'story', time: 1696118400 },
   { id: 8, title: 'story 8', type: 'story', time: 1696118400 },
   { id: 9, title: 'story 9', type: 'story', time: 1696118400 },
   { id: 10, title: 'story 10', type: 'story', time: 1696118400 },
-  { id: 11, title: 'story 11', type: 'story', time: 1696118400  },
+  { id: 11, title: 'story 11', type: 'story', time: 1696118400 },
   { id: 12, title: 'story 12', type: 'story', time: 1696118400 },
   { id: 13, title: 'story 13', type: 'story', time: 1696118400 },
   { id: 14, title: 'story 14', type: 'story', time: 1696118400 },
@@ -41,11 +40,15 @@ describe('HackerNewsListComponent', () => {
   beforeEach(async () => {
     mockNewsService = {
       getOtherStories: jest.fn().mockReturnValue(of(mockItems2)),
+      count: jest.fn().mockReturnValue(40),
     } as unknown as jest.Mocked<HackerNewsService>;
 
     await TestBed.configureTestingModule({
       imports: [HackerNewsListComponent],
-      providers: [provideRouter([]), { provide: HackerNewsService, useValue: mockNewsService }],
+      providers: [
+        provideRouter([]),
+        { provide: HackerNewsService, useValue: mockNewsService },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HackerNewsListComponent);
@@ -62,22 +65,33 @@ describe('HackerNewsListComponent', () => {
     component.storyType = 'topstories';
     component.currentPage = 1;
     component.fetchData();
-    expect(mockNewsService.getOtherStories).toHaveBeenCalledWith(1, 'topstories', 20);
+    expect(mockNewsService.getOtherStories).toHaveBeenCalledWith(
+      1,
+      'topstories',
+      20
+    );
     expect(component.stories.length).toBe(2);
   });
 
   it('should load next page and fetch new stories', () => {
     mockNewsService.getOtherStories.mockReturnValue(of(mockItems20));
+    component.currentPage = 1;
     component.storyType = 'topstories';
     component.loadNextPage();
     expect(component.currentPage).toBe(2);
-    expect(mockNewsService.getOtherStories).toHaveBeenCalledWith(2, 'topstories', 20);
+    expect(mockNewsService.getOtherStories).toHaveBeenCalledWith(
+      2,
+      'topstories',
+      20
+    );
+    expect(mockNewsService.count).toHaveBeenCalledWith();
     expect(component.stories.length).toBe(20);
     expect(component.stories[3].title).toBe('story 4');
   });
 
-  it('should return true for lastPage if fewer than 20 stories', () => {
+  it('should return true for lastPage if maxFetchCount * currentPage >=  mockNewsService.count()', () => {
     component.storyType = 'topstories';
+    component.currentPage = 2;
     expect(component.lastPage()).toBe(true);
   });
 

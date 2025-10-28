@@ -1,19 +1,53 @@
 <main class="show-stories-page">
-  <h1 class="story-page-heading">{{title}}</h1>
-    @for (story of stories; let i = $index; track story.id) {
-    <app-news-card
-      [cnt]="getCounter(i + 1)"
-      [id]="story.id"
-      [title]="story.title"
-      [by]="story.by"
-      [descendants]="story.descendants"
-      [score]="story.score"
-      [type]="story.type"
-      [url]="story.url"
-      [time]="story.time"
-    ></app-news-card>
-  }
+  <h1 class="story-page-heading">{{ title }}</h1>
   @if(stories.length > 0) {
-    <button (click)="loadNextPage()" [disabled]="lastPage()" aria-label="Next page">Next Page</button>
+  <div class="button-group">
+    <button
+      (click)="loadPreviousPage()"
+      [disabled]="currentPage === 1"
+      aria-label="Previous page"
+    >
+      Previous Page
+    </button>
+    <button
+      (click)="loadNextPage()"
+      [disabled]="lastPage()"
+      aria-label="Next page"
+    >
+      Next Page
+    </button>
+  </div>
+  } @if(storyType !== PastStoriesType) {
+  <p>
+    Showing stories {{ itemCounter + 1 }} -
+    {{ itemCounter + stories.length }} of {{ newsService.count() }}
+  </p>
+  } @for (story of stories; let i = $index; track story.id) {
+  <app-news-card
+    [cnt]="getCounter(i + 1)"
+    [id]="story.id"
+    [title]="story.title"
+    [by]="story.by"
+    [descendants]="story.descendants"
+    [score]="story.score"
+    [type]="story.type"
+    [url]="story.url"
+    [time]="story.time"
+  ></app-news-card>
+  } @if(stories.length > 0) {
+  <button
+    (click)="loadPreviousPage()"
+    [disabled]="currentPage === 1"
+    aria-label="Previous page"
+  >
+    Previous Page
+  </button>
+  <button
+    (click)="loadNextPage()"
+    [disabled]="lastPage()"
+    aria-label="Next page"
+  >
+    Next Page
+  </button>
   }
 </main>

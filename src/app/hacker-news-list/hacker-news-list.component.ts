@@ -20,7 +20,9 @@ export class HackerNewsListComponent implements OnInit {
   currentPage = 1;
   itemCounter = 0;
   storyType = 'topstories';
+  readonly PastStoriesType = PastStories;
   maxFetchCount = 20;
+  storiesEachPage: number[] = [];
 
   public stories: Item[] = [];
   private storyClick$ = new Subject<string>();
@@ -71,16 +73,21 @@ export class HackerNewsListComponent implements OnInit {
   }
 
   loadNextPage(): void {
-    this.itemCounter += this.stories.length;
+    this.storiesEachPage[this.currentPage] = this.itemCounter += this.stories.length;
     this.stories = [];
     this.currentPage++;
     this.fetchData();
   }
 
+  loadPreviousPage(): void {
+    this.itemCounter = this.currentPage <=  2 ? 0 : this.storiesEachPage[this.currentPage - 2];
+    this.stories = [];
+    this.currentPage--;
+    this.fetchData();
+  }
+
   lastPage(): boolean {
-    return (
-      this.storyType === PastStories || this.stories.length < this.maxFetchCount
-    );
+    return this.currentPage * this.maxFetchCount >= this.newsService.count();
   }
 
   getCounter(i: number): number {

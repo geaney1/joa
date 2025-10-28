@@ -11,7 +11,12 @@ export class HackerNewsService {
   private currentStoryType: string = '';
   private readonly baseUrl: string = 'https://hacker-news.firebaseio.com/v0';
 
+
   constructor(private http: HttpClient) {}
+
+  public count(): number {
+    return this.storIdList ? this.storIdList.length : 0;
+  }
 
   public getOtherStories(
     page: number,

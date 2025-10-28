@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { DatePipe, NgClass } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Item } from '../models/Item';
 
@@ -11,10 +11,10 @@ import { Item } from '../models/Item';
   styleUrl: './news-card.component.css',
 })
 export class NewsCardComponent implements OnInit {
-  @Input() cnt: number = 0;
+  @Input() cnt = 0;
   @Input() by?: string;
   @Input() descendants?: number;
-  @Input() id: number = 0;
+  @Input() id = 0;
   @Input() kids?: number[];
   @Input() score?: number;
   @Input() time?: number;
@@ -36,7 +36,6 @@ export class NewsCardComponent implements OnInit {
   public readonly POLLOPT = 'pollopt';
   public readonly ASK = 'ask';
 
-  public constructor() {}
 
   public get identiconUrl(): string {
     const lastDigit = (this.id % 10).toString();
@@ -50,12 +49,16 @@ export class NewsCardComponent implements OnInit {
 
     if (this.url) {
       try {
-        //@ts-ignore
-        const [_, domain] = /\/\/(.*?)\//.exec(this.url);
-        this.domain = domain;
+        const match = /\/\/(.*?)\//.exec(this.url);
+        if (match && match[1]) {
+          this.domain = match[1];
+        } else {
+          // fallback: strip protocol (http:// or https://) and take host
+          this.domain = this.url.replace(/(^\w+:|^)\/\//, '').split('/')[0];
+        }
       } catch {
-        // default to https check. TODO need check for http too
-        this.domain = this.url.slice(8);
+        // fallback: strip protocol (http:// or https://) and take host
+        this.domain = this.url.replace(/(^\w+:|^)\/\//, '').split('/')[0];
       }
     }
   }

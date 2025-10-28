@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NewsCardComponent } from './news-card.component';
-import { DatePipe } from '@angular/common';
 
 describe('NewsCardComponent', () => {
   let component: NewsCardComponent;

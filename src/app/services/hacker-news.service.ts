@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Observable, forkJoin, map, of, switchMap, tap } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { Observable, forkJoin, map, switchMap, tap } from 'rxjs';
 import { Item } from '../models/Item';
 import { HttpClient } from '@angular/common/http';
 
@@ -7,12 +7,11 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class HackerNewsService {
+  private http = inject(HttpClient);
   private storIdList: number[] = [];
-  private currentStoryType: string = '';
+  private currentStoryType = '';
   private readonly baseUrl: string = 'https://hacker-news.firebaseio.com/v0';
 
-
-  constructor(private http: HttpClient) {}
 
   public count(): number {
     return this.storIdList ? this.storIdList.length : 0;
@@ -22,7 +21,7 @@ export class HackerNewsService {
     page: number,
     storytype: string,
     maxFetchCount: number
-  ): Observable<Array<Item>> {
+  ): Observable<Item[]> {
     if (this.currentStoryType !== storytype) {
       // clear the array if a different story type menu option is selected
       this.storIdList = [];
@@ -42,8 +41,7 @@ export class HackerNewsService {
       );
 
     if (!this.storIdList || this.storIdList.length === 0) {
-      return this.http
-        .get<Array<number>>(`${this.baseUrl}/${storytype}.json`)
+      return this.http.get<number[]>(`${this.baseUrl}/${storytype}.json`)
         .pipe(
           tap((ids) => (this.storIdList = ids)), // cache ids
           switchMap((ids) => fetchItems(ids))
@@ -57,7 +55,7 @@ export class HackerNewsService {
     page: number,
     storytype: string,
     maxFetchCount: number
-  ): Observable<Array<Item>> {
+  ): Observable<Item[]> {
     if (this.currentStoryType !== storytype) {
       // clear the array if a different story type menu option is selected
       this.storIdList = [];
@@ -84,7 +82,7 @@ export class HackerNewsService {
 
     if (!this.storIdList || this.storIdList.length === 0) {
       return this.http
-        .get<Array<number>>(`${this.baseUrl}/topstories.json`)
+        .get<number[]>(`${this.baseUrl}/topstories.json`)
         .pipe(
           tap((ids) => (this.storIdList = ids)), // cache ids
           switchMap((ids) => fetchItems(ids))

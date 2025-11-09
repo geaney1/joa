@@ -22,6 +22,6 @@ describe('AppComponent', () => {
   });
 
   it('should have the correct title', () => {
-    expect(component.title).toBe('joa');
+    expect(component.title).toBe('joa-signals');
   });
 });
